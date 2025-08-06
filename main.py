@@ -3,16 +3,6 @@ Primer Quality Check
 """
 import re
 
-def main();
-    #get user primer/sequence and do check
-    #TODO main code
-
-
-
-
-
-
-
 
 def check_primer_quality(primer: str) -> str:
     #Check primer quality and report to user
@@ -21,6 +11,7 @@ def check_primer_quality(primer: str) -> str:
     green_flags = 0
     total_flags = 9
     output_message = ""
+
 
     if is_GC_clamp(primer):
         green_flags += 1
@@ -55,7 +46,7 @@ def check_primer_quality(primer: str) -> str:
     if is_GC_AT_ratio(primer):
         green_flags += 1
     else:
-        output_message += "GC/AT ratios outside of the recommended 60/40. \n"
+        output_message += "GC/AT or AT/GC ratios outside of the recommended 40/60. \n"
 
 
     if is_NT_repeats_and_runs(primer):
@@ -69,6 +60,14 @@ def check_primer_quality(primer: str) -> str:
     else:
         output_message += "Potential for hairpin formation. \n"
 
+    #get confidence score
+    confidence_percentage = green_flags / total_flags * 100
+
+    output_message += f"\nConfidence in primer: {confidence_percentage:.0f}%."
+
+    #Check if primer i valid and overwrite message if not (Eventually Try/except user input)
+    if not is_sequence_NTs(primer):
+        output_message = "Not a valid sequence."
 
 
     return output_message
@@ -171,31 +170,60 @@ def is_NT_repeats_and_runs(primer: str) -> bool:
 
     return True
 
+def is_sequence_NTs(primer: str) -> bool:
+    """Return true if primer contains only DNA nucleotides"""
+    for letter in primer:
+        if letter not in ('A','T','G','C', 'a', 't', 'g', 'c'):
+            return False
+
+    #if good sequence
+    return True
+
+
 #TODO need to update this to check the complement with rev primer
 def no_intraprimer_complementarity(primer: str) -> bool:
     """Return true if no intraprimer complementarity"""
     reverse_primer = primer[::-1]
+    reverse_primer_complementary = ""
 
-    repeat_count = 0
+    #return false if primer too short
+    if len(primer) < 3:
+        return False
+
+    #convert each base in reverse_primer to its complement
+    for letter in reverse_primer:
+        if letter == 'A':
+            reverse_primer_complementary += 'T'
+        if letter == 'T':
+            reverse_primer_complementary += 'A'
+        if letter == 'G':
+            reverse_primer_complementary += 'C'
+        if letter == 'C':
+            reverse_primer_complementary += 'G'
+
 
     #check for potential hairpinning, 3x or more
-    for i in range(len(primer) -2):
+    for i in range(len(primer) - 2):
         #Make sure comparison of 3+ and avoid OutOfIndexErrors
-        if i >= 3:
-         if primer[len(primer) - 1 - i] == reverse_primer[i] and primer[len(primer) - 1 - (i + 1)] == reverse_primer[i + 1] and primer[len(primer) - 1 - (i + 2)] == reverse_primer[i + 2]:
-                return False
+        #Compare last NT of primer with 1st complement of reversed primer
+        #Check sections of 3 bp at a time while "scanning"
+        if primer[len(primer) - 1 - i] == reverse_primer_complementary[i] and primer[len(primer) - 1 - (i + 1)] == reverse_primer_complementary[i + 1] and primer[len(primer) - 1 - (i + 2)] == reverse_primer_complementary[i + 2]:
+            return False
 
     #return true if no palindomic sections
     return True
 
 #TODO compare 2 primers
-def is_primer_pair_compatible() -> bool:
+#def is_primer_pair_compatible() -> bool:
     #Tm within 5 C of eachother?
 
     #No interprimer complimentarity
 
 
-
+def main():
+    # get user primer/sequence and do check
+    # TODO main code
+    print(check_primer_quality("ATATATATATATTTTTTTTTAAAAAAAAAAAATTTTGGGGGGGGGGCCCCCCCCCCA"))
 
 if __name__ == '__main__':
     main()
