@@ -222,8 +222,7 @@ def no_intraprimer_complementarity(primer: str) -> bool:
 
 def main():
     # get user primer/sequence and do check
-    # TODO main code
-    print(check_primer_quality("ATATATATATATTTTTTTTTAAAAAAAAAAAATTTTGGGGGGGGGGCCCCCCCCCCA"))
+
 
 if __name__ == '__main__':
     main()
