@@ -3,7 +3,6 @@ Primer Quality Check
 """
 import re
 
-
 def check_primer_quality(primer: str) -> str:
     #Check primer quality and report to user
     #Report a % confidence and warning messages
@@ -179,8 +178,24 @@ def is_sequence_NTs(primer: str) -> bool:
     #if good sequence
     return True
 
+def get_Tm(primer: str) -> bool:
+    """Return true if Tm is between 65-75 C?. Using Wallace rule: Tm = 2°C (A+T) + 4°C (G+C)."""
+    at_count = 0
+    gc_count = 0
+    tm = 0
 
-#TODO need to update this to check the complement with rev primer
+    for letter in primer:
+        if letter in ('A','T'):
+            at_count += 1
+        if letter in ('G','C'):
+            gc_count += 1
+
+    tm = 2*at_count + 4*gc_count
+
+    return tm
+
+
+
 def no_intraprimer_complementarity(primer: str) -> bool:
     """Return true if no intraprimer complementarity"""
     reverse_primer = primer[::-1]
@@ -213,16 +228,88 @@ def no_intraprimer_complementarity(primer: str) -> bool:
     #return true if no palindomic sections
     return True
 
-#TODO compare 2 primers
-#def is_primer_pair_compatible() -> bool:
+#TODO validate
+def is_primer_pair_compatible(primer1: str, primer2: str) -> str:
+    output_message = ""
+
     #Tm within 5 C of eachother?
+    if abs(get_Tm(primer1) - get_Tm(primer2)) > 5:
+        melting_temps_good = False
+    else:
+        melting_temps_good = True
+
 
     #No interprimer complimentarity
+    #check which one is longer
+    if len(primer1) > len(primer2):
+        long = primer1
+        short = primer2
+    else:
+        long = primer2
+        short = primer1
+
+    #complementary matches
+    matches = 0
+
+    #convert each base in reverse_primer to its complement
+    short_complementary = ""
+
+    for letter in short:
+        if letter == 'A':
+            short_complementary += 'T'
+        if letter == 'T':
+            short_complementary += 'A'
+        if letter == 'G':
+            short_complementary += 'C'
+        if letter == 'C':
+            short_complementary += 'G'
+
+    for j in range(len(short_complementary) - 2):  # -2 because we want 3-letter chunks
+        short_chunk = short_complementary[j:j + 3]
+
+        #Scan run small primer along long and mark if codon matching (would be complementary in non-reversed primer)
+        for i in range(len(long) - 2):  # -3 so slicing stays within bounds
+            chunk = long[i:i + 3]
+
+            if short_chunk == chunk:
+                matches += 1
+
+    reversed_long = long[::-1]
+
+    # run with one reversed
+    for j in range(len(short_complementary) - 2):  # -2 because we want 3-letter chunks
+        short_chunk = short_complementary[j:j + 3]
+
+        #Scan run small primer along long and mark if codon matching (would be complementary in non-reversed primer)
+        for i in range(len(reversed_long) - 2):  # -3 so slicing stays within bounds
+            chunk = reversed_long[i:i + 3]
+
+            if short_chunk == chunk:
+                matches += 1
+
+    if matches >= 4:
+        no_interprimer_complementary = False
+    else:
+        no_interprimer_complementary = True
+
+
+    #result output
+    if melting_temps_good and no_interprimer_complementary:
+        output_message += "Primers appear compatible."
+    elif melting_temps_good and not no_interprimer_complementary:
+        output_message += "Primers have regions of complementarity, may form primer dimers."
+    elif not melting_temps_good and no_interprimer_complementary:
+        output_message += "Primer melting temperatures differ by more than 5 C."
+    else:
+        output_message += "Primer melting temperatures differ by more than 5 C, and potential for primer dimers."
+
+    return output_message
+
 
 
 def main():
     # get user primer/sequence and do check
-
+    test = ""
 
 if __name__ == '__main__':
     main()
