@@ -39,8 +39,8 @@ blank_screen = tk.Frame(window, bg='white')
 blank_screen.place(relx=0, rely=0, relheight=1, relwidth=1)
 
 #Landing page image
-cover_image_bg = Image.open("assets/Primer_bg_title_cropped2.png")
-cover_image_bg = cover_image_bg.resize((550, 300), Image.LANCZOS)  # shrink or stretch
+cover_image_bg = Image.open("assets/Primer_bg_title_cropped4.png")
+cover_image_bg = cover_image_bg.resize((500, 300), Image.LANCZOS)  # shrink or stretch
 cover_image_bg_photo = ImageTk.PhotoImage(cover_image_bg)
 cover_image_label =tk.Label(blank_screen, image=cover_image_bg_photo)
 cover_image_label.place(x=0,y=0,relwidth=1, relheight=1);
