@@ -5,8 +5,10 @@ GUI to check quality of molecular primers for cloning
 #TODO perform individual checks on each primer when doing dual check
 #TODO make sure user can only input NT (dual primer)
 
+
 import tkinter as tk
 from main import check_primer_quality, is_primer_pair_compatible
+from PIL import Image, ImageTk
 
 #Get user input and check primer quality
 def check_user_primer():
@@ -35,6 +37,13 @@ window.resizable(False, False)
 #set up blank screen
 blank_screen = tk.Frame(window, bg='white')
 blank_screen.place(relx=0, rely=0, relheight=1, relwidth=1)
+
+#Landing page image
+cover_image_bg = Image.open("assets/Primer_bg_title_cropped2.png")
+cover_image_bg = cover_image_bg.resize((550, 300), Image.LANCZOS)  # shrink or stretch
+cover_image_bg_photo = ImageTk.PhotoImage(cover_image_bg)
+cover_image_label =tk.Label(blank_screen, image=cover_image_bg_photo)
+cover_image_label.place(x=0,y=0,relwidth=1, relheight=1);
 
 #Set up frames
 screen_a = tk.Frame(window, bg='white') #single primer
