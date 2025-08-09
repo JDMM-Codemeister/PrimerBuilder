@@ -1,13 +1,10 @@
 """
 GUI to check quality of molecular primers for cloning
 """
-#TODO add refresh button to screens
-#TODO perform individual checks on each primer when doing dual check
-#TODO make sure user can only input NT (dual primer)
 
 
 import tkinter as tk
-from main import check_primer_quality, is_primer_pair_compatible
+from main import check_primer_quality, is_primer_pair_compatible, dual_primer_design
 from PIL import Image, ImageTk
 
 #Get user input and check primer quality
@@ -24,7 +21,9 @@ def check_user_dual_primers():
     result_label_b.config(text=result)
 
 def design_dual_primers():
-    test = ""
+    user_sequence = entry_c.get()
+    result = dual_primer_design(user_sequence)
+    result_label_c.config(text=result)
 
 #make frame
 def show_frame(frame):
@@ -109,6 +108,7 @@ window.config(menu=menu_bar)
 
 nav_menu = tk.Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label='Menu', menu=nav_menu)
+nav_menu.add_command(label='Home', command=lambda: show_frame(blank_screen))
 nav_menu.add_command(label='Single Primer Checker', command=lambda: show_frame(screen_a))
 nav_menu.add_command(label='Primer Pair Checker', command=lambda: show_frame(screen_b))
 nav_menu.add_command(label='Design Forward and Reverse Primers', command=lambda: show_frame(screen_c))

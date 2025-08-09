@@ -74,8 +74,9 @@ def check_primer_quality(primer: str) -> str:
 
 def is_GC_clamp(primer: str) -> bool:
     """Returns true is primer 3' end with G or C. Must enter primer 5' to 3'"""
-    if primer[-1] == 'C' or primer[-1] == 'G':
-        return True
+    if primer:
+        if primer[-1] in ['C', 'G', 'c','g']:
+            return True
     else:
         return False
 
@@ -85,7 +86,7 @@ def is_GC_content_modest(primer: str) -> bool:
 
     #Count each G or C
     for letter in primer:
-        if letter == 'G' or letter == 'C':
+        if letter in ['C', 'G', 'c','g']:
             gc_count += 1
 
     #Get GC percentage
@@ -228,7 +229,7 @@ def no_intraprimer_complementarity(primer: str) -> bool:
     #return true if no palindomic sections
     return True
 
-#TODO validate
+
 def is_primer_pair_compatible(primer1: str, primer2: str) -> str:
     output_message = ""
 
@@ -304,6 +305,87 @@ def is_primer_pair_compatible(primer1: str, primer2: str) -> str:
         output_message += "Primer melting temperatures differ by more than 5 C, and potential for primer dimers."
 
     return output_message
+
+
+def design_forward_primer(sequence: str) -> str:
+    good_primer = False
+    forward_primer = ""
+
+    counter = 0
+    while not good_primer and counter < 40:
+        forward_primer += sequence[counter]
+
+
+        if is_GC_clamp(forward_primer):
+            if is_GC_content_modest(forward_primer):
+                if are_GC_repeats_good(forward_primer):
+                    if is_primer_length(forward_primer):
+                        if is_Tm(forward_primer):
+                            if is_GC_AT_ratio(forward_primer):
+                                if is_NT_repeats_and_runs(forward_primer):
+                                    if no_intraprimer_complementarity(forward_primer):
+                                        good_primer = True
+        counter += 1
+
+    return forward_primer
+
+def design_reverse_primer(sequence: str) -> str:
+    good_primer = False
+    reverse_primer = ""
+
+    counter = 0
+    while not good_primer and (counter < 40 and counter < len(sequence) - 1):
+        #input is reverse, so now make into complement
+        if sequence[counter] in ['A','a']:
+            reverse_primer += 'T'
+        elif sequence[counter] in ['T','t']:
+            reverse_primer += 'A'
+        elif sequence[counter] in ['G','g']:
+            reverse_primer += 'C'
+        elif sequence[counter] in ['C','c']:
+            reverse_primer += 'G'
+
+
+        if is_GC_clamp(reverse_primer):
+            if is_GC_content_modest(reverse_primer):
+                if are_GC_repeats_good(reverse_primer):
+                    if is_primer_length(reverse_primer):
+                        if is_Tm(reverse_primer):
+                            if is_GC_AT_ratio(reverse_primer):
+                                if is_NT_repeats_and_runs(reverse_primer):
+                                    if no_intraprimer_complementarity(reverse_primer):
+                                        good_primer = True
+        counter += 1
+
+    return reverse_primer
+
+#TODO
+def dual_primer_design(sequence):
+    """Design dual primers given a user-input sequence."""
+    reverse_sequence = sequence[::-1]
+
+    forward_primer = design_forward_primer(sequence)
+    reverse_primer = design_reverse_primer(reverse_sequence)
+    forward_primer = forward_primer.upper()
+    reverse_primer = reverse_primer.upper()
+
+    #Exit if good
+    if forward_primer == "":
+        forward_primer = "Error"
+
+    if reverse_primer == "":
+        reverse_primer = "Error"
+
+    if is_primer_pair_compatible(forward_primer, reverse_primer):
+        return f"Forward Primer: {forward_primer}\nReverse Primer: {reverse_primer}"
+    else:
+        return f"Primers appear to complex to design."
+
+
+        #TODO make sure not complementary
+
+
+
 
 
 

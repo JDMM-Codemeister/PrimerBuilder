@@ -1,7 +1,7 @@
-# PrimerBuilder  
+# PrimerBuilder 
 ## (In Progress)
 
-## About  
+## About
 Compute appropriate primers for a given sequence.  
 -GC content between 40 and 60% with the 3’ of a primer ending in G or C to promote binding. A GC Clamp.  
 -Not too many repeating G or C bases, as this can cause primer-dimer formation.  
@@ -11,3 +11,11 @@ Compute appropriate primers for a given sequence.
 -Avoid runs of 4 or more of one base, or dinucleotide repeats (for example, GAAAA or CACACACA).  
 -Avoid intra-primer homology (more than 3 bases that complement within the primer) or inter-primer homology (forward and reverse primers having complementary sequences).  
 -If you are using the primers for mutagenesis, try to have the mismatched bases towards the middle of the primer.  
+
+## Usage  
+Ensure requirements are met and run gui.py  
+
+### Requirements  
+Python 3.12.5  
+tkinter  
+pillow  
