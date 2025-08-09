@@ -23,6 +23,9 @@ def check_user_dual_primers():
     result = is_primer_pair_compatible(user_primer, user_primer2)
     result_label_b.config(text=result)
 
+def design_dual_primers():
+    test = ""
+
 #make frame
 def show_frame(frame):
     frame.tkraise()
@@ -48,8 +51,9 @@ cover_image_label.place(x=0,y=0,relwidth=1, relheight=1);
 #Set up frames
 screen_a = tk.Frame(window, bg='white') #single primer
 screen_b = tk.Frame(window, bg='white') #dual primer
+screen_c = tk.Frame(window, bg='white') #Design forward and reverse primer
 
-for frame in (blank_screen, screen_a, screen_b):
+for frame in (blank_screen, screen_a, screen_b, screen_c):
     frame.place(relx=0, rely=0, relheight=1, relwidth=1)
 
 
@@ -74,6 +78,7 @@ entry_label_b1.pack(pady=5)
 entry_b1 = tk.Entry(screen_b, width=30)
 entry_b1.pack(pady=5)
 
+
 #Primer2 fields
 entry_label_b2 = tk.Label(screen_b, text="Enter the second primer sequence:", bg='white')
 entry_label_b2.pack(pady=5)
@@ -86,7 +91,16 @@ check_button_b.pack(pady=10)
 result_label_b = tk.Label(screen_b, text="", wraplength=500, justify="center", bg='white')
 result_label_b.pack(pady=5)
 
+#TODO input labels and fields for frame C
+entry_label_c = tk.Label(screen_c, text="Enter your sequence of interest:", bg='white')
+entry_label_c.pack(pady=5)
+entry_c = tk.Entry(screen_c, width=30)
+entry_c.pack(pady=5)
 
+check_button_c = tk.Button(screen_c, text="Design Primers", command=design_dual_primers)
+check_button_c.pack(pady=10)
+result_label_c = tk.Label(screen_c, text="", wraplength=500, justify="center", bg='white')
+result_label_c.pack(pady=5)
 
 
 #Create menu
@@ -95,8 +109,9 @@ window.config(menu=menu_bar)
 
 nav_menu = tk.Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label='Menu', menu=nav_menu)
-nav_menu.add_command(label='Single Primer Design', command=lambda: show_frame(screen_a))
-nav_menu.add_command(label='Dual Primer Design', command=lambda: show_frame(screen_b))
+nav_menu.add_command(label='Single Primer Checker', command=lambda: show_frame(screen_a))
+nav_menu.add_command(label='Primer Pair Checker', command=lambda: show_frame(screen_b))
+nav_menu.add_command(label='Design Forward and Reverse Primers', command=lambda: show_frame(screen_c))
 
 #Show A by default
 show_frame(blank_screen)

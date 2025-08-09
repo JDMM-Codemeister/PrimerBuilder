@@ -33,7 +33,7 @@ def check_primer_quality(primer: str) -> str:
     if is_primer_length(primer):
         green_flags += 1
     else:
-        output_message += "Primer length is outside of the recommended 18-30. \n"
+        output_message += "Primer length is outside of the recommended 18-30 bp. \n"
 
 
     if is_Tm(primer):
